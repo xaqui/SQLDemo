@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     // references to buttons and other controls (member variables)
@@ -32,23 +34,32 @@ public class MainActivity extends AppCompatActivity {
 
         // button listeners
         btn_add.setOnClickListener(new View.OnClickListener() {
+            CustomerModel customerModel;
             @Override
             public void onClick(View view) {
                 try {
-                    CustomerModel customerModel = new CustomerModel(-1,et_name.getText().toString(), Integer.parseInt(et_age.getText().toString()), sw_activeCustomer.isChecked());
+                    customerModel = new CustomerModel(-1,et_name.getText().toString(), Integer.parseInt(et_age.getText().toString()), sw_activeCustomer.isChecked());
                     Toast.makeText(MainActivity.this, customerModel.toString(), Toast.LENGTH_SHORT).show();
 
                 } catch(Exception e) {
                     Toast.makeText(MainActivity.this, "Error Creating Customer", Toast.LENGTH_SHORT).show();
+                    customerModel = new CustomerModel(-1, "error", -1, false);
                 }
-                
+                DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
+
+                boolean success = dataBaseHelper.addOne(customerModel);
+
+                Toast.makeText(MainActivity.this, "Success = "+ success,Toast.LENGTH_SHORT).show();
             }
         });
 
         btn_viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "View All Button", Toast.LENGTH_SHORT).show();
+                DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
+                List<CustomerModel> allCustomers = dataBaseHelper.getAllCustomers();
+
+                Toast.makeText(MainActivity.this, allCustomers.toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
