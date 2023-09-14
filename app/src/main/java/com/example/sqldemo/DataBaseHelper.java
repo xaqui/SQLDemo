@@ -41,6 +41,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    // CREATE
     public boolean addOne(CustomerModel customerModel){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -53,13 +54,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return insert >= 0;
     }
 
-    public List<CustomerModel> getAllCustomers(){
-        List<CustomerModel> returnList = new ArrayList<CustomerModel>();
 
+    // READ
+    public List<CustomerModel> getAllCustomers(){
+        List<CustomerModel> returnList = new ArrayList<>();
         String queryString = "SELECT * FROM "+ CUSTOMER_TABLE;
 
         SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor cursor = db.rawQuery(queryString, null);
 
         if(cursor.moveToFirst()){
@@ -68,7 +69,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 int customerID = cursor.getInt(0);
                 String customerName = cursor.getString(1);
                 int customerAge = cursor.getInt(2);
-                boolean customerActive = cursor.getInt(3) == 1 ? true : false;
+                boolean customerActive = cursor.getInt(3) == 1;
 
                 CustomerModel newCustomer = new CustomerModel(customerID, customerName, customerAge, customerActive);
                 returnList.add(newCustomer);
@@ -77,6 +78,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return  returnList;
+    }
+
+    // DELETE
+    public boolean deleteOne(CustomerModel customerModel){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String queryString = "DELETE FROM "+ CUSTOMER_TABLE + " WHERE " +COLUMN_ID + " = "+customerModel.getId();
+
+        Cursor cursor = db.rawQuery(queryString, null);
+        return cursor.moveToFirst();
     }
 
 }
